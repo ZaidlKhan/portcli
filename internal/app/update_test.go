@@ -122,6 +122,34 @@ func TestKillPromptAndSuccessMessageUseSameSizeBox(t *testing.T) {
 	assert.Equal(t, lipgloss.Height(promptView), lipgloss.Height(successView), "success box height should match prompt box height")
 }
 
+func TestBannersUseSameHorizontalSize(t *testing.T) {
+	m := Model{state: StateConfirmKill, targetName: "dev-server", targetPort: "3000"}
+	wantWidth := lipgloss.Width(strings.SplitN(m.View().Content, "\n  ", 2)[0])
+
+	m.state = StateKillSuccess
+	m.targetPID = 1234
+	assert.Equal(t, wantWidth, lipgloss.Width(strings.SplitN(m.View().Content, "\n  ", 2)[0]))
+
+	m.state = StateKillError
+	m.errMessage = "permission denied"
+	assert.Equal(t, wantWidth, lipgloss.Width(strings.SplitN(m.View().Content, "\n  ", 2)[0]))
+
+	m.state = StateOpenError
+	assert.Equal(t, wantWidth, lipgloss.Width(strings.SplitN(m.View().Content, "\n  ", 2)[0]))
+
+	m.state = StateNormal
+	m.isEmpty = true
+	assert.Equal(t, wantWidth, lipgloss.Width(strings.SplitN(m.View().Content, "\n  ", 2)[0]))
+}
+
+func TestTableHasNoExtraRightPadding(t *testing.T) {
+	m := NewModel()
+	m.setTableRows([]table.Row{{"3000", "dev-server", "1234", "http://localhost:3000", "main", "0.0%", "4.6 MB"}})
+
+	tableView := strings.SplitN(m.View().Content, "\n  ", 2)[0]
+	assert.Equal(t, 90, lipgloss.Width(tableView), "table border should align with the rendered columns")
+}
+
 func TestOpenURLFailureIsShownToUser(t *testing.T) {
 	m := Model{table: table.New()}
 	m.table.SetColumns([]table.Column{

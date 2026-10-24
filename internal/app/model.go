@@ -89,7 +89,7 @@ func (m *Model) setTableRows(rows []table.Row) {
 	}
 
 	m.table.SetRows(rows)
-	m.table.SetWidth(90)
+	m.table.SetWidth(88)
 	m.table.SetHeight(len(rows) + 2)
 }
 

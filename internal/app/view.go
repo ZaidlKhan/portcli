@@ -94,7 +94,7 @@ func (m Model) View() tea.View {
 			Foreground(lipgloss.Color("240")).
 			Render("No active development servers found.")
 
-		return appView(baseStyle.Render(msg) + "\n  " + helpText + "\n")
+		return appView(actionBox(msg, "240") + "\n  " + helpText + "\n")
 	}
 
 	return appView(baseStyle.Render(m.table.View()) + "\n  " + helpText + "\n")
